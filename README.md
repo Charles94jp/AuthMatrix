@@ -1,6 +1,6 @@
 # 修改
 
-1. response regex默认为最近添加的那个。原版response regex总为`^HTTP/1\\.1 200 OK`
+1. response regex默认为最近使用的那个。原版response regex总为`^HTTP/1\\.1 200 OK`
 
 2. Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效
 
