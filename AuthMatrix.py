@@ -578,6 +578,11 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                         regex = "^"+re.escape(responseCodeHeader)
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
+
+                # The response regex defaults to the most recently added one
+                if len(self._db.arrayOfRegexes)>1:
+                    regex=self._db.arrayOfRegexes[-1]
+
                 messageIndex = self._db.createNewMessage(RequestResponseStored(self,requestResponse=messageInfo), name, regex)
             self._messageTable.redrawTable()
             self._chainTable.redrawTable()
@@ -2591,7 +2596,10 @@ class ChainTable(JTable):
                     if dests:
                         self.destList = JList(dests)
                         self.destList.setVisibleRowCount(10)
+
+                        # Select all destinations by default
                         self.destList.getSelectionModel().setSelectionInterval(0, len(dests)-1)
+
                         self.scrollablePane = JScrollPane(self.destList)
     
                         self.button = JButton()
