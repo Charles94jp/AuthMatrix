@@ -2591,6 +2591,7 @@ class ChainTable(JTable):
                     if dests:
                         self.destList = JList(dests)
                         self.destList.setVisibleRowCount(10)
+                        self.destList.getSelectionModel().setSelectionInterval(0, len(dests)-1)
                         self.scrollablePane = JScrollPane(self.destList)
     
                         self.button = JButton()

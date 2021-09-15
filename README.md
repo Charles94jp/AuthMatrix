@@ -1,3 +1,17 @@
+# 修改
+
+Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效
+
+本版本修改内容为：点开Destination(s)默认全选。这样发送新请求进AuthMatrix后，只需点开Destination(s)接着回车就行。
+
+![](images/img01.png)
+
+# AuthMatrix其它功能使用方法
+
+用AuthMatrix进行人工权限测试十分方便，同一个请求可以自动、批量、同时，替换成不同的用户凭证（Cookie、Header、参数），并发送请求，可视化结果。如何判断结果可自行写正则。测试内容支持导出导入。
+
+----
+
 # AuthMatrix v0.8.2
 
 AuthMatrix is an extension to Burp Suite that provides a simple way to test authorization in web applications and web services. With AuthMatrix, testers focus on thoroughly defining tables of users, roles, and requests for their specific target application upfront. These tables are structured in a similar format to that of an access control matrix common in various threat modeling methodologies.
