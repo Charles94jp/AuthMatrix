@@ -2267,6 +2267,11 @@ class MessageTableModel(AbstractTableModel):
                 if val and val not in self._db.arrayOfRegexes:
                     self._db.arrayOfRegexes.append(val)
                 # TODO (0.9): Remove unused Regexes from that list
+                
+                # Let the most recently edited always be at the end
+                else:
+                    self._db.arrayOfRegexes.remove(val)
+                    self._db.arrayOfRegexes.append(val)
             else:
                 roleIndex = self._db.getRoleByColumn(col, 'm')._index
                 messageEntry.addRoleByIndex(roleIndex,val)
