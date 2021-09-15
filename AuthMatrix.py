@@ -580,8 +580,7 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
 
                 # The response regex defaults to the most recently added one
-                if len(self._db.arrayOfRegexes)>1:
-                    regex=self._db.arrayOfRegexes[-1]
+                regex=self._db.arrayOfRegexes[-1]
 
                 messageIndex = self._db.createNewMessage(RequestResponseStored(self,requestResponse=messageInfo), name, regex)
             self._messageTable.redrawTable()
