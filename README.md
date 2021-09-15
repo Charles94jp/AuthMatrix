@@ -1,8 +1,10 @@
 # 修改
 
-Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效
+1. response regex默认为最近添加的那个。原版response regex总为`^HTTP/1\\.1 200 OK`
 
-本版本修改内容为：点开Destination(s)默认全选。这样发送新请求进AuthMatrix后，只需点开Destination(s)接着回车就行。
+2. Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效
+
+    本版本修改内容为：点开Destination(s)默认全选。这样发送新请求进AuthMatrix后，只需点开Destination(s)接着回车就行。
 
 ![](images/img01.png)
 
