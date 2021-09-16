@@ -563,25 +563,34 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
 
         
 
-
+        # 
+        # add request to AuthMatrix
+        #
         def addRequestsToTab(e):
             for messageInfo in messages:
                 requestInfo = self._helpers.analyzeRequest(messageInfo)
                 name = str(requestInfo.getMethod()).ljust(8) + requestInfo.getUrl().getPath()
                 # Grab regex from response
-                regex = "^HTTP/1\\.1 200 OK"
                 response = messageInfo.getResponse()
+                responseStr = self._helpers.bytesToString(response)
+                if len(self._db.arrayOfRegexes)>1:
+                    # The response regex defaults to the most recently added one
+                    regex=self._db.arrayOfRegexes[-1]
+                else:
+                    regex = "^HTTP/1\\.1 200 OK"
+                    if response:
+                        responseInfo=self._helpers.analyzeResponse(response)
+                        if len(responseInfo.getHeaders()):
+                            responseCodeHeader = responseInfo.getHeaders()[0]
+                            regex = "^"+re.escape(responseCodeHeader)
                 if response:
-                    responseInfo=self._helpers.analyzeResponse(response)
-                    if len(responseInfo.getHeaders()):
-                        responseCodeHeader = responseInfo.getHeaders()[0]
-                        regex = "^"+re.escape(responseCodeHeader)
+                    if responseStr.find('"success":true')>=0:
+                        regex = '"success":true'
+                    if responseStr.find('"total":')>=0:
+                        regex = '"total":'
+                    # if responseStr.find('')>=0:
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
-
-                # The response regex defaults to the most recently added one
-                regex=self._db.arrayOfRegexes[-1]
-
                 messageIndex = self._db.createNewMessage(RequestResponseStored(self,requestResponse=messageInfo), name, regex)
             self._messageTable.redrawTable()
             self._chainTable.redrawTable()
@@ -2270,8 +2279,9 @@ class MessageTableModel(AbstractTableModel):
                 
                 # Let the most recently edited always be at the end
                 else:
-                    self._db.arrayOfRegexes.remove(val)
-                    self._db.arrayOfRegexes.append(val)
+                    if len(self._db.arrayOfRegexes)>1:
+                        self._db.arrayOfRegexes.remove(val)
+                        self._db.arrayOfRegexes.append(val)
             else:
                 roleIndex = self._db.getRoleByColumn(col, 'm')._index
                 messageEntry.addRoleByIndex(roleIndex,val)

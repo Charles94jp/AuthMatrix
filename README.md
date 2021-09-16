@@ -1,8 +1,8 @@
 # 修改
 
-1. response regex默认为最近使用的那个。原版response regex总为`^HTTP/1\\.1 200 OK`
+1. response regex初始为`^HTTP/1\\.1 200 OK`，如果有其它特征（如`"success":true`）则优先选择其它特征，否则为最近使用的那个。原版response regex总为`^HTTP/1\\.1 200 OK`
 
-2. Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效
+2. Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效。原版缺点是全选时，对后续添加进AuthMatrix的请求不生效。
 
     本版本修改内容为：点开Destination(s)默认全选。这样发送新请求进AuthMatrix后，只需点开Destination(s)接着回车就行。
 
@@ -11,6 +11,7 @@
 # AuthMatrix其它功能使用方法
 
 用AuthMatrix进行人工权限测试十分方便，同一个请求可以自动、批量、同时，替换成不同的用户凭证（Cookie、Header、参数），并发送请求，可视化结果。如何判断结果可自行写正则。测试内容支持导出导入。
+
 
 ----
 
