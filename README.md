@@ -4,7 +4,6 @@
     - 插件中定义的几个特征（如`"success":true` `"total":`）
     - 用户历史手动添加的正则，取最近编辑的那个
     - HTTP状态码（如`^HTTP/1\\.1 200 OK`）
-    <br>
     原版response regex总为`^HTTP/1\\.1 200 OK`。为达到上述第二条，鄙人在class MatrixDB()中添加了变量arrayOfDefRegexes，只存储用户手动添加的正则
 
 2. Chain用于替换请求中的部分内容，如替换参数，其中的Destination(s)指定此Chain对哪些请求报文有效。原版缺点是全选时，对后续添加进AuthMatrix的请求不生效。
