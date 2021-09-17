@@ -571,23 +571,28 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                 requestInfo = self._helpers.analyzeRequest(messageInfo)
                 name = str(requestInfo.getMethod()).ljust(8) + requestInfo.getUrl().getPath()
                 # Grab regex from response
+                # Priority: Program designation rules > User history rules > http status code
                 response = messageInfo.getResponse()
-                responseStr = self._helpers.bytesToString(response)
-                if len(self._db.arrayOfRegexes)>1:
-                    # The response regex defaults to the most recently added one
-                    regex=self._db.arrayOfRegexes[-1]
-                else:
-                    regex = "^HTTP/1\\.1 200 OK"
-                    if response:
-                        responseInfo=self._helpers.analyzeResponse(response)
-                        if len(responseInfo.getHeaders()):
-                            responseCodeHeader = responseInfo.getHeaders()[0]
-                            regex = "^"+re.escape(responseCodeHeader)
+                regex = "^HTTP/1\\.1 200 OK"
                 if response:
+                    responseInfo=self._helpers.analyzeResponse(response)
+                    if len(responseInfo.getHeaders()):
+                        responseCodeHeader = responseInfo.getHeaders()[0]
+                        regex = "^"+re.escape(responseCodeHeader)
+                if len(self._db.arrayOfDefRegexes)>0:
+                    # The response regex defaults to the most recently added one
+                    regex=self._db.arrayOfDefRegexes[-1]
+                if response:
+                    responseStr = self._helpers.bytesToString(response)
                     if responseStr.find('"success":true')>=0:
                         regex = '"success":true'
                     if responseStr.find('"total":')>=0:
                         regex = '"total":'
+                    index = responseStr.find('"return_code":')
+                    if index>=0:
+                        regex=responseStr[index:]
+                        index=regex.find(',"')
+                        regex=regex[:index]
                     # if responseStr.find('')>=0:
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
@@ -1299,6 +1304,7 @@ class MatrixDB():
         self.arrayOfSVs = ArrayList()
         self.headerCount = 0
         self.arrayOfRegexes = []
+        self.arrayOfDefRegexes = []
 
 
     # Returns the index of the user, whether its new or not
@@ -1433,6 +1439,7 @@ class MatrixDB():
         self.arrayOfSVs = ArrayList()
         self.headerCount = 0
         self.arrayOfRegexes = []
+        self.arrayOfDefRegexes = []
         self.lock.release()
 
     def loadLegacy(self, fileName, extender):
@@ -2274,14 +2281,17 @@ class MessageTableModel(AbstractTableModel):
                 messageEntry._regex = val
                 # Add this value to the array
                 if val and val not in self._db.arrayOfRegexes:
+                    self._db.arrayOfDefRegexes.append(val)
                     self._db.arrayOfRegexes.append(val)
-                # TODO (0.9): Remove unused Regexes from that list
-                
-                # Let the most recently edited always be at the end
                 else:
-                    if len(self._db.arrayOfRegexes)>1:
+                    if val and val in self._db.arrayOfDefRegexes and len(self._db.arrayOfRegexes)>1 and val!=self._db.arrayOfRegexes[-1]:
                         self._db.arrayOfRegexes.remove(val)
                         self._db.arrayOfRegexes.append(val)
+                        if len(self._db.arrayOfDefRegexes)>1 and val!=self._db.arrayOfDefRegexes[-1]:
+                            self._db.arrayOfDefRegexes.remove(val)
+                            self._db.arrayOfDefRegexes.append(val)
+
+                # TODO (0.9): Remove unused Regexes from that list
             else:
                 roleIndex = self._db.getRoleByColumn(col, 'm')._index
                 messageEntry.addRoleByIndex(roleIndex,val)
