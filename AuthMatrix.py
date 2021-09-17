@@ -591,7 +591,12 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                     index = responseStr.find('"return_code":')
                     if index>=0:
                         regex=responseStr[index:]
-                        index=regex.find(',"')
+                        index0=regex.find(',"')
+                        index1=regex.find('}')
+                        if index0>0 and index0<index1:
+                            index=index0
+                        else:
+                            index=index1
                         regex=regex[:index]
                     # if responseStr.find('')>=0:
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
