@@ -573,17 +573,21 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                 # Grab regex from response
                 # Priority: Program designation rules > User history rules > http status code
                 response = messageInfo.getResponse()
+                responseStr = self._helpers.bytesToString(response)
+                # http status code
                 regex = "^HTTP/1\\.1 200 OK"
                 if response:
                     responseInfo=self._helpers.analyzeResponse(response)
                     if len(responseInfo.getHeaders()):
                         responseCodeHeader = responseInfo.getHeaders()[0]
                         regex = "^"+re.escape(responseCodeHeader)
+                # User history rules
                 if len(self._db.arrayOfDefRegexes)>0:
-                    # The response regex defaults to the most recently added one
-                    regex=self._db.arrayOfDefRegexes[-1]
+                    for regex_temp in self._db.arrayOfDefRegexes:
+                        if responseStr.find(regex_temp)>=0:
+                            regex=regex_temp
+                # Program designation rules
                 if response:
-                    responseStr = self._helpers.bytesToString(response)
                     if responseStr.find('"success":true')>=0:
                         regex = '"success":true'
                     if responseStr.find('"total":')>=0:
@@ -2288,13 +2292,6 @@ class MessageTableModel(AbstractTableModel):
                 if val and val not in self._db.arrayOfRegexes:
                     self._db.arrayOfDefRegexes.append(val)
                     self._db.arrayOfRegexes.append(val)
-                else:
-                    if val and val in self._db.arrayOfDefRegexes and len(self._db.arrayOfRegexes)>1 and val!=self._db.arrayOfRegexes[-1]:
-                        self._db.arrayOfRegexes.remove(val)
-                        self._db.arrayOfRegexes.append(val)
-                        if len(self._db.arrayOfDefRegexes)>1 and val!=self._db.arrayOfDefRegexes[-1]:
-                            self._db.arrayOfDefRegexes.remove(val)
-                            self._db.arrayOfDefRegexes.append(val)
 
                 # TODO (0.9): Remove unused Regexes from that list
             else:
