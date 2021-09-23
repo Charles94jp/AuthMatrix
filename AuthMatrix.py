@@ -586,6 +586,7 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                     for regex_temp in self._db.arrayOfDefRegexes:
                         if responseStr.find(regex_temp)>=0:
                             regex=regex_temp
+                            break
                 # Program designation rules
                 if response:
                     if responseStr.find('"success":true')>=0:
