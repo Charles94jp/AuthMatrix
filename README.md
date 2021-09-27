@@ -1,8 +1,8 @@
 # 修改
 
-1. 当添加一个新请求AuthMatrix时，其response regex按优先级从高到低排列为：
+1. 当添加一个新请求AuthMatrix时，其response regex取值优先级从高到低排列为：
     - 插件中定义的几个特征（如`"success":true` `"total":`）
-    - 用户历史手动添加的正则，取最近编辑的那个
+    - 用户历史手动添加的正则 history，用户'Send request(s) to AuthMatrix'时，在response中查找所有history，取第一个匹配中的
     - HTTP状态码（如`^HTTP/1\\.1 200 OK`）
 
     原版response regex总为`^HTTP/1\\.1 200 OK`。为达到上述第二条，鄙人在class MatrixDB()中添加了变量arrayOfDefRegexes，只存储用户手动添加的正则
