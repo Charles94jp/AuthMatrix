@@ -567,6 +567,7 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
         # add request to AuthMatrix
         #
         def addRequestsToTab(e):
+            messageIndexs=[]
             for messageInfo in messages:
                 requestInfo = self._helpers.analyzeRequest(messageInfo)
                 name = str(requestInfo.getMethod()).ljust(8) + requestInfo.getUrl().getPath()
@@ -596,10 +597,10 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                     index = responseStr.find('"return_code":')
                     if index>=0:
                         regex=responseStr[index:]
-                        index0=regex.find(',"')
+                        index0=regex.find('",')
                         index1=regex.find('}')
                         if index0>0 and index0<index1:
-                            index=index0
+                            index=index0+1
                         else:
                             index=index1
                         regex=regex[:index]
@@ -607,9 +608,13 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
                 messageIndex = self._db.createNewMessage(RequestResponseStored(self,requestResponse=messageInfo), name, regex)
+                messageIndexs.append(messageIndex)
             self._messageTable.redrawTable()
             self._chainTable.redrawTable()
             self.highlightTab()
+            # Run Requst(s)
+            t = Thread(target=self.runMessagesThread, args = [messageIndexs])
+            t.start()
 
 
         class UserCookiesActionListener(ActionListener):
@@ -1412,7 +1417,6 @@ class MatrixDB():
         # Add regex to array if its new
         if regex and regex not in self.arrayOfRegexes:
             self.arrayOfRegexes.append(regex)
-
 
         self.lock.release()
         return messageIndex

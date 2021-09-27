@@ -13,6 +13,10 @@
 
 ![](images/img01.png)
 
+3. 添加一个新请求AuthMatrix时，自动发送
+
+    'Send request(s) to AuthMatrix', Auto 'Run Request(s)'
+
 # AuthMatrix其它功能使用方法
 
 用AuthMatrix进行人工权限测试十分方便，同一个请求可以自动、批量、同时，替换成不同的用户凭证（Cookie、Header、参数），并发送请求，可视化结果。如何判断结果可自行写正则。测试内容支持导出导入。
