@@ -590,20 +590,19 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                             break
                 # Program designation rules
                 if response:
-                    if responseStr.find('"success":true')>=0:
-                        regex = '"success":true'
-                    if responseStr.find('"total":')>=0:
+                    # find success,succeed
+                    matchResp = re.search('"succe[a-zA-z]*":[\s\S]*?[,}]', responseStr)
+                    if matchResp:
+                        regex = matchResp.group(0)[:-1]
+                    if responseStr.find('"total":') >= 0:
                         regex = '"total":'
-                    index = responseStr.find('"return_code":')
-                    if index>=0:
-                        regex=responseStr[index:]
-                        index0=regex.find('",')
-                        index1=regex.find('}')
-                        if index0>0 and index0<index1:
-                            index=index0+1
-                        else:
-                            index=index1
-                        regex=regex[:index]
+                    matchResp = re.search('"error.*(code|no)":[\s\S]*?[,}]', responseStr)
+                    if matchResp:
+                        regex = matchResp.group(0)[:-1]
+                    # find return_code
+                    matchResp = re.search('"return.*(code|no)":[\s\S]*?[,}]', responseStr)
+                    if matchResp:
+                        regex = matchResp.group(0)[:-1]
                     # if responseStr.find('')>=0:
                 # Must create a new RequestResponseStored object since modifying the original messageInfo
                 # from its source (such as Repeater) changes this saved object. MessageInfo is a reference, not a copy
