@@ -596,7 +596,7 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                         regex = matchResp.group(0)[:-1]
                     if responseStr.find('"total":') >= 0:
                         regex = '"total":'
-                    matchResp = re.search('"error.*(code|no)":[\s\S]*?[,}]', responseStr)
+                    matchResp = re.search('"error[^,]*(code|no)":[\s\S]*?[,}]', responseStr)
                     if matchResp:
                         regex = matchResp.group(0)[:-1]
                     # find return_code
