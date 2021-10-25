@@ -1,0 +1,4 @@
+addRequestsToTab	把报文发送到AuthMatrix，正则优先级是 程序匹配、用户历史值、http状态码。此处会自动改动arrayOfRegexes
+setValueAt			修改报文列表中的属性（重点是正则），此处用户操作会改动arrayOfRegexes
+getTableCellEditorComponent  选择Destination适用的报文ID		全选
+arrayOfRegexes		定义在class MatrixDB()
