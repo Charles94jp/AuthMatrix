@@ -591,16 +591,16 @@ class BurpExtender(IBurpExtender, ITab, IMessageEditorController, IContextMenuFa
                 # Program designation rules
                 if response:
                     # find success,succeed
-                    matchResp = re.search('"succe[a-zA-z]*":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
+                    matchResp = re.search('"succe[a-zA-z]*?":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
                     if matchResp:
                         regex = matchResp.group(0)[:-1]
                     if responseStr.find('"total":') >= 0:
                         regex = '"total":'
-                    matchResp = re.search('"error[^,]*(code|no)":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
+                    matchResp = re.search('"error[^,]*?(code|no)":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
                     if matchResp:
                         regex = matchResp.group(0)[:-1]
                     # find return_code
-                    matchResp = re.search('"return.*(code|no)":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
+                    matchResp = re.search('"return.*?(code|no)":[\s\S]*?[,}]', responseStr, re.IGNORECASE)
                     if matchResp:
                         regex = matchResp.group(0)[:-1]
                     # if responseStr.find('')>=0:
